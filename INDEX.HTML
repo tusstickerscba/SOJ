@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Escritos Judiciales SOJ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --azul: #2463eb;
+      --azul-hover: #1746a0;
+      --rojo: #ef4444;
+      --verde: #10b981;
+      --amarillo: #facc15;
+      --gris: #e5e7eb;
+      --gris-claro: #f3f4f6;
+      --fondo: #f9fafb;
+      --sombra: 0 4px 20px rgba(36,99,235,0.05);
+      --toast-bg: #222b;
+    }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--fondo);
+      margin: 0;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 990px;
+      margin: 36px auto 24px auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: var(--sombra);
+      padding: 36px 30px 30px 30px;
+    }
+    @media (max-width: 1020px) {
+      .container { padding: 4vw 1vw; }
+    }
+    h1 {
+      font-size: 2.2em;
+      color: var(--azul);
+      text-align: center;
+      letter-spacing: 0.01em;
+      margin-bottom: 10px;
+    }
+    h2 {
+      color: #333;
+      font-weight: 700;
+      font-size: 1.22em;
+      margin-top: 30px;
+      margin-bottom: 4px;
+    }
+    .row { display: flex; gap: 13px; }
+    .row > div { flex: 1; }
+    @media (max-width: 800px) {
+      .row { flex-direction: column; gap: 0; }
+    }
+    label {
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 3px;
+      display: inline-block;
+    }
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 7px;
+      border: 1px solid var(--gris);
+      border-radius: 4px;
+      background: var(--gris-claro);
+      font-size: 1.04em;
+      transition: border 0.17s, box-shadow 0.17s;
+    }
+    input:focus { border-color: var(--azul); outline: none; }
+    .input-error {
+      border-color: var(--rojo) !important;
+      box-shadow: 0 0 0 2px #fca5a5;
+      background: #fff0f0;
+    }
+    .btn {
+      padding: 10px 22px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.08em;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 2px 6px 2px 0;
+      transition: background 0.17s, box-shadow 0.17s;
+      box-shadow: 0 2px 8px rgba(36,99,235,0.07);
+    }
+    .btn-primary { background: var(--azul); color: #fff; }
+    .btn-primary:hover { background: var(--azul-hover);}
+    .btn-warning { background: var(--amarillo); color: #333;}
+    .btn-warning:hover { background: #b28a00;}
+    .btn-secondary { background: #d1d5db; color: #222;}
+    .btn-secondary:hover { background: #a1a1aa;}
+    .btn-success { background: var(--verde); color: #fff;}
+    .btn-mini { padding: 3px 10px; font-size: 0.95em;}
+    .mb-2 { margin-bottom: 11px; }
+    .mb-1 { margin-bottom: 5px; }
+    .mt-2 { margin-top: 13px; }
+    .table-casos {
+      width: 100%; border-collapse: collapse; margin-top: 20px; background: #fafbfc;
+      border-radius: 8px; overflow: hidden; font-size: 0.99em;
+    }
+    .table-casos th, .table-casos td {
+      border: 1px solid var(--gris);
+      padding: 8px 6px; text-align: left;
+      cursor: pointer;
+    }
+    .table-casos th { background: var(--gris-claro); color: #222; user-select: none;}
+    .table-casos td { background: #fff; cursor: auto;}
+    .table-casos tr:hover td { background: #f1f5f9; }
+    .footer {
+      text-align: center;
+      margin: 45px 0 0 0;
+      color: #888;
+      font-size: 0.99em;
+    }
+    .actions-cell button {
+      margin-bottom: 2px;
+    }
+    .dropzone {
+      border: 2px dashed var(--azul);
+      border-radius: 7px;
+      background: #eef2ff;
+      color: var(--azul-hover);
+      text-align: center;
+      padding: 20px;
+      margin: 15px 0 18px 0;
+      font-size: 1.08em;
+      cursor: pointer;
+      transition: background 0.17s, border-color 0.17s;
+    }
+    .dropzone.dragover {
+      background: #dbeafe;
+      border-color: var(--azul-hover);
+    }
+    .help {
+      font-size: 0.98em;
+      color: #555;
+      margin: 7px 0 13px 0;
+      padding-left: 6px;
+    }
+    .escrito-preview {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+      font-size: 0.97em;
+      padding: 12px 14px;
+      margin: 12px 0;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      max-height: 340px;
+    }
+    .btn-group { margin-top: 9px; }
+    .import-btn { margin-right: 18px;}
+    .tooltip {
+      background: #111827;
+      color: #fff;
+      padding: 4px 7px;
+      border-radius: 6px;
+      position: absolute;
+      font-size: 0.93em;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 115%;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.13s;
+      z-index: 999;
+    }
+    .tooltip.show { opacity: 1;}
+    .relative { position: relative;}
+    .modal-bg {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.13);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-bg.show { display: flex; }
+    .modal {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(36,99,235,0.09);
+      padding: 30px 23px 18px 23px;
+      max-width: 580px;
+      width: 100%;
+      max-height: 70vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .modal h3 {
+      margin-top: 0;
+      color: var(--azul);
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 1.25em;
+    }
+    .modal textarea {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+      font-size: 0.98em;
+      padding: 12px 14px;
+      margin: 0 0 16px 0;
+      white-space: pre-wrap;
+      overflow-x: auto;
+      max-height: 280px;
+      min-height: 120px;
+      font-family: inherit;
+      resize: vertical;
+      width: 100%;
+    }
+    .modal .modal-btns {
+      text-align: right;
+      margin-top: 0;
+    }
+    .modal .btn {
+      margin-right: 6px;
+      margin-bottom: 0;
+    }
+    .modal-close {
+      position: absolute;
+      top: 20px; right: 26px;
+      cursor: pointer;
+      font-size: 1.5em;
+      color: #888;
+      background: none;
+      border: none;
+      z-index: 2200;
+    }
+    .modal-close:hover {
+      color: var(--rojo);
+    }
+    .editando input, .editando .btn-primary {
+      border-color: var(--amarillo) !important;
+      background: #fef9c3 !important;
+      color: #333 !important;
+    }
+    .buscador-casos {
+      width: 100%;
+      max-width: 340px;
+      margin: 8px 0 0 0;
+      padding: 8px 10px;
+      font-size: 1em;
+      border-radius: 4px;
+      border: 1px solid var(--gris);
+      background: #f8fafc;
+      display: block;
+    }
+    .sortable:after {
+      content: " ⇅";
+      font-size: 0.9em;
+      color: #888;
+      opacity: 0.7;
+    }
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--toast-bg);
+      color: #fff;
+      padding: 14px 24px;
+      border-radius: 7px;
+      box-shadow: 0 4px 20px #2221;
+      z-index: 3999;
+      font-size: 1.05em;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.21s, transform 0.21s;
+      transform: translateY(30px);
+    }
+    .toast.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .toast-action {
+      color: var(--amarillo);
+      text-decoration: underline;
+      cursor: pointer;
+      margin-left: 16px;
+    }
+    @media (max-width: 600px) {
+      .toast { right: 8px; left: 8px; width: auto; }
+      .container { padding: 2vw 0.5vw; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="main">
+    <h1>Escritos Judiciales SOJ</h1>
+    <div class="mb-2 help">
+      Completá los campos de un caso y hacé click en <b>Agregar caso</b>. También podés importar muchos casos desde Excel/CSV.<br>
+      Cuando termines, visualizá y copiá el texto de cada escrito.
+    </div>
+    <div class="row mb-2" id="form-row">
+      <div>
+        <label for="expediente">Expediente <span style="color:#888">(obligatorio)</span></label>
+        <input type="text" id="expediente" autocomplete="off" maxlength="30" aria-required="true">
+      </div>
+      <div>
+        <label for="contribuyente">Contribuyente <span style="color:#888">(obligatorio)</span></label>
+        <input type="text" id="contribuyente" autocomplete="off" maxlength="90" aria-required="true">
+      </div>
+      <div>
+        <label for="cuit">CUIT <span style="color:#888">(obligatorio)</span></label>
+        <input type="text" id="cuit" autocomplete="off" maxlength="18" aria-required="true">
+      </div>
+      <div>
+        <label for="monto">Monto <span style="color:#888">(obligatorio)</span></label>
+        <input type="text" id="monto" autocomplete="off" maxlength="20" placeholder="Ej: 161.580,36" aria-required="true">
+      </div>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-primary" onclick="agregarCaso()" id="btnAdd">Agregar caso</button>
+      <button class="btn btn-secondary import-btn" onclick="document.getElementById('fileInput').click()">Importar Excel/CSV</button>
+      <input type="file" id="fileInput" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" style="display:none" aria-label="Importar Excel o CSV">
+      <button class="btn btn-warning" onclick="borrarTodo()" id="btnClear">Borrar todos</button>
+      <button class="btn btn-success" onclick="descargarPlantillaExcel()" id="btnDownloadTemplate" style="background:#10b981;color:#fff;">Descargar plantilla Excel</button>
+      <button class="btn btn-primary" onclick="exportarEscritos()" id="btnExportTxt" style="background:#1746a0;">Exportar todos los escritos</button>
+    </div>
+    <div class="help mb-2">
+      Tip: Para importar desde Excel, asegurate de tener columnas: <b>expediente, contribuyente, cuit, monto</b> (cabecera en la primera fila).
+    </div>
+    <div class="dropzone" id="dropzone" 
+      ondragover="event.preventDefault();this.classList.add('dragover');"
+      ondragleave="this.classList.remove('dragover');"
+      ondrop="dropArchivo(event)">
+      Arrastrá aquí un archivo .csv o .xlsx para importar casos masivamente.
+    </div>
+    <input type="text" class="buscador-casos" id="buscadorCasos" placeholder="Buscar en casos..." aria-label="Buscar en casos">
+    <table class="table-casos" id="tablaCasos" style="display:none;" aria-label="Casos judiciales">
+      <thead>
+        <tr>
+          <th class="sortable" onclick="ordenarTabla('idx')">#</th>
+          <th class="sortable" onclick="ordenarTabla('expediente')">Expte.</th>
+          <th class="sortable" onclick="ordenarTabla('contribuyente')">Contribuyente</th>
+          <th class="sortable" onclick="ordenarTabla('cuit')">CUIT</th>
+          <th class="sortable" onclick="ordenarTabla('monto')">Monto</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="footer">
+      <div>SOJS <span style="color:var(--azul);"></span></div>
+    </div>
+  </div>
+
+  <!-- Modal de Visualización y Copiado -->
+  <div class="modal-bg" id="modalVisualizar" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+    <div class="modal">
+      <button class="modal-close" onclick="cerrarModalVisualizar()" aria-label="Cerrar">&times;</button>
+      <h3 id="modalTitulo">Texto del escrito</h3>
+      <textarea id="modalTexto" readonly aria-readonly="true"></textarea>
+      <div class="modal-btns">
+        <button class="btn btn-secondary" onclick="copiarTextoModal()">Copiar texto</button>
+        <button class="btn btn-primary" onclick="cerrarModalVisualizar()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast notifications -->
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script>
+    let casos = [];
+    let editIndex = -1;
+    let lastDeleted = null;
+    let lastDeletedIdx = null;
+    let toastTimeout = null;
+    let searchTerm = "";
+    let ordenActual = { campo: null, asc: true };
+
+    function showToast(msg, actionText, actionFn) {
+      const toast = document.getElementById('toast');
+      toast.innerHTML = msg;
+      if (actionText && actionFn) {
+        const span = document.createElement('span');
+        span.className = "toast-action";
+        span.textContent = actionText;
+        span.onclick = function() {
+          clearTimeout(toastTimeout);
+          toast.classList.remove('show');
+          actionFn();
+        };
+        toast.appendChild(span);
+      }
+      toast.classList.add('show');
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => { toast.classList.remove('show'); }, 3200);
+    }
+
+    function limpiarCampos() {
+      document.getElementById('expediente').value = '';
+      document.getElementById('contribuyente').value = '';
+      document.getElementById('cuit').value = '';
+      document.getElementById('monto').value = '';
+      document.getElementById('expediente').focus();
+      document.getElementById('form-row').classList.remove('editando');
+      Array.from(document.querySelectorAll('.input-error')).forEach(el => el.classList.remove('input-error'));
+    }
+
+    function marcarErrores(campos) {
+      Array.from(document.querySelectorAll('.input-error')).forEach(el => el.classList.remove('input-error'));
+      campos.forEach(id => document.getElementById(id).classList.add('input-error'));
+    }
+
+    function cuitValido(cuit) {
+      cuit = cuit.replace(/-/g, "");
+      if (!/^\d{11}$/.test(cuit)) return false;
+      let mult = [5,4,3,2,7,6,5,4,3,2];
+      let suma = 0;
+      for(let i=0; i<10; i++) suma += parseInt(cuit[i])*mult[i];
+      let mod = 11 - (suma % 11);
+      if(mod === 11) mod = 0;
+      if(mod === 10) mod = 9;
+      return mod === parseInt(cuit[10]);
+    }
+
+    function guardarCasos() {
+      localStorage.setItem('casos_soj', JSON.stringify(casos));
+    }
+    function cargarCasos() {
+      let data = localStorage.getItem('casos_soj');
+      if (data) casos = JSON.parse(data);
+      else casos = [];
+    }
+
+    function filtrarCasos() {
+      if (!searchTerm.trim()) return casos.map((c, idx) => ({ ...c, idx }));
+      let t = searchTerm.toLowerCase();
+      return casos
+        .map((c, idx) => ({ ...c, idx }))
+        .filter(c =>
+          c.expediente.toLowerCase().includes(t) ||
+          c.contribuyente.toLowerCase().includes(t) ||
+          c.cuit.toLowerCase().includes(t) ||
+          c.monto.toLowerCase().includes(t)
+        );
+    }
+
+    function ordenarTabla(campo) {
+      if (ordenActual.campo === campo) ordenActual.asc = !ordenActual.asc;
+      else { ordenActual.campo = campo; ordenActual.asc = true; }
+      mostrarCasos();
+    }
+
+    function mostrarCasos() {
+      guardarCasos();
+      const tabla = document.getElementById('tablaCasos');
+      const tbody = tabla.querySelector('tbody');
+      tbody.innerHTML = '';
+      let lista = filtrarCasos();
+      if (ordenActual.campo) {
+        lista.sort((a, b) => {
+          let vA = (ordenActual.campo === "idx") ? a.idx : a[ordenActual.campo];
+          let vB = (ordenActual.campo === "idx") ? b.idx : b[ordenActual.campo];
+          if (ordenActual.campo === "monto") {
+            let nA = parseFloat(vA.replace(/\./g,"").replace(",","."));
+            let nB = parseFloat(vB.replace(/\./g,"").replace(",","."));
+            if(isNaN(nA) || isNaN(nB)) return 0;
+            return ordenActual.asc ? nA - nB : nB - nA;
+          }
+          vA = vA.toString().toLowerCase(); vB = vB.toString().toLowerCase();
+          if (vA < vB) return ordenActual.asc ? -1 : 1;
+          if (vA > vB) return ordenActual.asc ? 1 : -1;
+          return 0;
+        });
+      }
+      if (lista.length === 0) {
+        tabla.style.display = 'none';
+        return;
+      }
+      tabla.style.display = '';
+      lista.forEach((c, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${c.idx+1}</td>
+          <td>${c.expediente}</td>
+          <td>${c.contribuyente}</td>
+          <td>${c.cuit}</td>
+          <td>${c.monto}</td>
+          <td class="actions-cell relative">
+            <button class="btn btn-info btn-mini" onclick="visualizarTexto(${c.idx}, this)" aria-label="Ver escrito">Ver texto</button>
+            <button class="btn btn-warning btn-mini" onclick="editarCaso(${c.idx}, this)" aria-label="Editar caso">Editar</button>
+            <button class="btn btn-danger btn-mini" onclick="eliminarCaso(${c.idx}, this)" aria-label="Eliminar caso">Eliminar</button>
+          </td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function agregarCaso() {
+      const exp = document.getElementById('expediente').value.trim();
+      const nombre = document.getElementById('contribuyente').value.trim();
+      const cuit = document.getElementById('cuit').value.trim();
+      const monto = document.getElementById('monto').value.trim();
+      let camposErr = [];
+      if (!exp) camposErr.push('expediente');
+      if (!nombre) camposErr.push('contribuyente');
+      if (!cuit) camposErr.push('cuit');
+      if (!monto) camposErr.push('monto');
+      if (camposErr.length) {
+        marcarErrores(camposErr);
+        showToast('Completá todos los campos obligatorios');
+        return;
+      }
+      if (!/^[\d.,]+$/.test(monto)) {
+        marcarErrores(['monto']);
+        showToast('El monto debe tener sólo números, puntos o comas.');
+        return;
+      }
+      let cuitOk = cuitValido(cuit);
+      if (!cuitOk) {
+        if (!confirm('El CUIT no es válido según el dígito verificador. ¿Deseás agregarlo de todos modos?')) {
+          marcarErrores(['cuit']);
+          return;
+        }
+      }
+      if (editIndex >= 0) {
+        casos[editIndex] = {expediente: exp, contribuyente: nombre, cuit, monto};
+        editIndex = -1;
+        showToast('Caso editado correctamente');
+      } else {
+        casos.push({expediente: exp, contribuyente: nombre, cuit, monto});
+        showToast('Caso agregado');
+      }
+      limpiarCampos();
+      mostrarCasos();
+    }
+
+    function editarCaso(idx, btn) {
+      const c = casos[idx];
+      document.getElementById('expediente').value = c.expediente;
+      document.getElementById('contribuyente').value = c.contribuyente;
+      document.getElementById('cuit').value = c.cuit;
+      document.getElementById('monto').value = c.monto;
+      editIndex = idx;
+      document.getElementById('form-row').classList.add('editando');
+      showToast("Editando caso #" + (idx+1));
+    }
+
+    function eliminarCaso(idx, btn) {
+      lastDeleted = { ...casos[idx] };
+      lastDeletedIdx = idx;
+      casos.splice(idx, 1);
+      mostrarCasos();
+      showToast('Caso eliminado', 'Deshacer', deshacerEliminado);
+    }
+    function deshacerEliminado() {
+      if (lastDeleted && typeof lastDeletedIdx === "number") {
+        casos.splice(lastDeletedIdx, 0, lastDeleted);
+        mostrarCasos();
+        showToast('Eliminación deshecha');
+        lastDeleted = null;
+        lastDeletedIdx = null;
+      }
+    }
+
+    function visualizarTexto(idx, btn) {
+      const modal = document.getElementById('modalVisualizar');
+      const textarea = document.getElementById('modalTexto');
+      const c = casos[idx];
+      if (!c) return;
+      textarea.value = generarTexto(c);
+      modal.classList.add('show');
+      document.body.style.overflow = "hidden";
+      setTimeout(()=>{textarea.focus(); textarea.select();}, 150);
+    }
+    function cerrarModalVisualizar() {
+      document.getElementById('modalVisualizar').classList.remove('show');
+      document.body.style.overflow = "";
+    }
+    function copiarTextoModal() {
+      const textarea = document.getElementById('modalTexto');
+      textarea.select();
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(textarea.value).then(()=> {
+          showToast('Texto copiado al portapapeles');
+        });
+      } else {
+        document.execCommand('copy');
+        showToast('Texto copiado al portapapeles');
+      }
+    }
+
+    function numeroALetras(montoInput) {
+      montoInput = String(montoInput).trim().replace(/\s/g, "");
+      let lastComma = montoInput.lastIndexOf(',');
+      let lastDot = montoInput.lastIndexOf('.');
+      let sep = '';
+      if (lastComma > lastDot) sep = ',';
+      else if (lastDot > lastComma) sep = '.';
+      let entero, decimal;
+      if (sep) {
+        entero = montoInput.substring(0, montoInput.lastIndexOf(sep)).replace(/[.,]/g, '');
+        decimal = montoInput.substring(montoInput.lastIndexOf(sep) + 1);
+      } else {
+        entero = montoInput.replace(/[.,]/g, '');
+        decimal = '';
+      }
+      if (decimal.length > 2) decimal = Math.round(Number('0.' + decimal) * 100).toString().padStart(2, '0');
+      if (decimal.length === 1) decimal += "0";
+      if (decimal.length === 0) decimal = "00";
+      if (!/^\d+$/.test(entero)) return '—';
+      if (!/^\d{2}$/.test(decimal)) return '—';
+
+      const unidades = ["", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"];
+      const especiales = ["diez", "once", "doce", "trece", "catorce", "quince", "dieciséis", "diecisiete", "dieciocho", "diecinueve"];
+      const decenas = ["", "", "veinte", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta", "noventa"];
+      const centenas = ["", "ciento", "doscientos", "trescientos", "cuatrocientos", "quinientos", "seiscientos", "setecientos", "ochocientos", "novecientos"];
+      function convertirMenor100(n) {
+        n = Number(n);
+        if (n < 10) return unidades[n];
+        if (n < 20) return especiales[n - 10];
+        if (n < 30) return n === 20 ? "veinte" : "veinti" + unidades[n % 10];
+        let d = Math.floor(n / 10), u = n % 10;
+        return decenas[d] + (u ? " y " + unidades[u] : "");
+      }
+      function convertir(n) {
+        n = parseInt(n, 10);
+        if (isNaN(n)) return '';
+        if (n === 0) return "cero";
+        if (n === 100) return "cien";
+        if (n < 100) return convertirMenor100(n);
+        if (n < 1000) {
+          let c = Math.floor(n / 100), r = n % 100;
+          return centenas[c] + (r ? " " + convertirMenor100(r) : "");
+        }
+        if (n < 1000000) {
+          let miles = Math.floor(n / 1000), resto = n % 1000;
+          let milesTxt = '';
+          if (miles === 1) milesTxt = "mil";
+          else if (miles > 1) milesTxt = convertir(miles) + " mil";
+          else milesTxt = '';
+          return (milesTxt ? milesTxt : "") + (resto ? (milesTxt ? " " : "") + convertir(resto) : "");
+        }
+        if (n < 1000000000) {
+          let millones = Math.floor(n / 1000000), resto = n % 1000000;
+          let millTxt = millones === 1 ? "un millón" : convertir(millones) + " millones";
+          return millTxt + (resto ? " " + convertir(resto) : "");
+        }
+        return "mucho dinero";
+      }
+      let texto = convertir(entero);
+      texto += (parseInt(entero, 10) === 1) ? ' peso' : ' pesos';
+      if (decimal && parseInt(decimal) > 0) {
+        texto += ' con ' + convertir(decimal) + ((parseInt(decimal) === 1) ? ' centavo' : ' centavos');
+      }
+      texto = texto.charAt(0).toUpperCase() + texto.slice(1);
+      return texto;
+    }
+
+    function generarTexto(c) {
+      const nombre = c.contribuyente.toUpperCase();
+      const montoTexto = numeroALetras(c.monto);
+      return `SEÑOR/A JUEZ/A:
+Reyna Novillo Enrique Pablo- 1-32159, en estos autos caratulados “DIRECCIÓN GENERAL DE RENTAS DE LA PROVINCIA DE CÓRDOBA C/ ${nombre} (EXPTE ${c.expediente})”, ante V.S. comparezco y digo:
+
+I. SOLICITA EMBARGO GENERAL DE FONDOS
+Vengo a solicitar a V.S. ordene la traba de embargo general de fondos sobre las cuentas corrientes, caja de ahorro, inversiones a plazo fijo y/o cualquier otra cuenta de la que resulte titular el ${nombre} CUIT (${c.cuit}) hasta cubrir la suma de PESOS “${montoTexto}.” ($${c.monto}.-) correspondiente al monto TOTAL DE CAPITAL E INTERESES que surge del título de deuda respectivo.
+
+II. SOLICITA APERTURA DE CUENTA
+A esos fines, vengo por el presente a solicitar a V.S. proceda a la apertura de cuenta bancaria a la vista para uso judicial a fin de poder depositar los fondos retenidos oportunamente a la orden de este tribunal y para estos autos.
+
+III - PETITUM:
+Por todo lo expuesto a S.S. pido:
+a) Ordene Embargo General de Fondos en la forma solicitada.
+b) Tenga presente lo manifestado y en consecuencia proceda a la apertura de cuenta bancaria a la vista para uso judicial. -
+
+ES JUSTICIA.
+`;
+    }
+
+    document.getElementById('fileInput').addEventListener('change', function(e){
+      importarArchivo(e.target.files[0]);
+      e.target.value = '';
+    });
+    function dropArchivo(ev) {
+      ev.preventDefault();
+      document.getElementById('dropzone').classList.remove('dragover');
+      if (ev.dataTransfer.files.length > 0) {
+        importarArchivo(ev.dataTransfer.files[0]);
+      }
+    }
+    function importarArchivo(file) {
+      if (!file) return;
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (ext === 'csv') {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          importarDesdeCSV(e.target.result);
+        };
+        reader.readAsText(file);
+      } else if (ext === 'xlsx' || ext === 'xls') {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, {type: 'array'});
+          const sheet = workbook.Sheets[workbook.SheetNames[0]];
+          const json = XLSX.utils.sheet_to_json(sheet, {header:1, defval:""});
+          importarDesdeArray(json);
+        };
+        reader.readAsArrayBuffer(file);
+      } else {
+        showToast('Solo se permiten archivos .csv, .xls o .xlsx');
+      }
+    }
+    function importarDesdeCSV(texto) {
+      const filas = texto.split(/\r?\n/).filter(x=>x.trim());
+      const encabezado = filas[0].split(';').length > filas[0].split(',').length
+        ? filas[0].split(';') : filas[0].split(',');
+      const idxExp = encabezado.findIndex(h=>h.trim().toLowerCase().includes('expediente'));
+      const idxCon = encabezado.findIndex(h=>h.trim().toLowerCase().includes('contribuyente'));
+      const idxCuit = encabezado.findIndex(h=>h.trim().toLowerCase().includes('cuit'));
+      const idxMonto = encabezado.findIndex(h=>h.trim().toLowerCase().includes('monto'));
+      if (idxExp<0 || idxCon<0 || idxCuit<0 || idxMonto<0) {
+        showToast('No se encuentran las columnas requeridas en el archivo.');
+        return;
+      }
+      let nuevos = [];
+      for(let i=1; i<filas.length; ++i){
+        const fila = filas[i].split(filas[0].includes(';') ? ';' : ',');
+        if(fila.length<4) continue;
+        nuevos.push({
+          expediente: fila[idxExp].trim(),
+          contribuyente: fila[idxCon].trim(),
+          cuit: fila[idxCuit].trim(),
+          monto: fila[idxMonto].trim()
+        });
+      }
+      if(nuevos.length){
+        casos = casos.concat(nuevos);
+        showToast(`Se importaron ${nuevos.length} casos.`);
+        mostrarCasos();
+      }
+    }
+    function importarDesdeArray(arr){
+      let encabezado = arr[0].map(x=>x.toString().toLowerCase().trim());
+      const idxExp = encabezado.findIndex(h=>h.includes('expediente'));
+      const idxCon = encabezado.findIndex(h=>h.includes('contribuyente'));
+      const idxCuit = encabezado.findIndex(h=>h.includes('cuit'));
+      const idxMonto = encabezado.findIndex(h=>h.includes('monto'));
+      if (idxExp<0 || idxCon<0 || idxCuit<0 || idxMonto<0) {
+        showToast('No se encuentran las columnas requeridas en el archivo.');
+        return;
+      }
+      let nuevos = [];
+      for(let i=1; i<arr.length; ++i){
+        if(!arr[i] || arr[i].length<4) continue;
+        nuevos.push({
+          expediente: arr[i][idxExp].toString().trim(),
+          contribuyente: arr[i][idxCon].toString().trim(),
+          cuit: arr[i][idxCuit].toString().trim(),
+          monto: arr[i][idxMonto].toString().trim()
+        });
+      }
+      if(nuevos.length){
+        casos = casos.concat(nuevos);
+        showToast(`Se importaron ${nuevos.length} casos.`);
+        mostrarCasos();
+      }
+    }
+
+    function descargarPlantillaExcel() {
+      if (typeof XLSX === 'undefined') {
+        showToast('No se puede descargar la plantilla porque no se cargó el módulo XLSX.');
+        return;
+      }
+      const headers = [["expediente", "contribuyente", "cuit", "monto"]];
+      const ws = XLSX.utils.aoa_to_sheet(headers);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Casos");
+      XLSX.writeFile(wb, "plantilla_casos.xlsx");
+    }
+
+    function exportarEscritos() {
+      if (!casos.length) {
+        showToast('No hay casos para exportar.');
+        return;
+      }
+      let contenido = casos.map((c, i) => 
+        `--- Caso #${i+1} - Expte: ${c.expediente} ---\n${generarTexto(c)}\n`
+      ).join('\n\n');
+      let blob = new Blob([contenido], { type: "text/plain" });
+      let a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'escritos_soj.txt';
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(()=>{document.body.removeChild(a);},200);
+      showToast('Archivo de escritos generado');
+    }
+
+    function borrarTodo() {
+      if (casos.length === 0) return;
+      if (confirm('¿Estás seguro de borrar TODOS los casos cargados?')) {
+        casos = [];
+        guardarCasos();
+        mostrarCasos();
+        showToast('Todos los casos han sido borrados');
+      }
+    }
+
+    window.mostrarCasos = mostrarCasos;
+    window.editarCaso = editarCaso;
+    window.eliminarCaso = eliminarCaso;
+    window.visualizarTexto = visualizarTexto;
+    window.ordenarTabla = ordenarTabla;
+
+    cargarCasos();
+    limpiarCampos();
+    mostrarCasos();
+
+    document.getElementById('expediente').addEventListener('keypress', e=>{if(e.key==="Enter")document.getElementById('contribuyente').focus();});
+    document.getElementById('contribuyente').addEventListener('keypress', e=>{if(e.key==="Enter")document.getElementById('cuit').focus();});
+    document.getElementById('cuit').addEventListener('keypress', e=>{if(e.key==="Enter")document.getElementById('monto').focus();});
+    document.getElementById('monto').addEventListener('keypress', e=>{
+      if(e.key==="Enter") document.getElementById('btnAdd').focus();
+    });
+    document.getElementById('buscadorCasos').addEventListener('input', function() {
+      searchTerm = this.value;
+      mostrarCasos();
+    });
+    document.addEventListener('keydown', function(e){
+      if(e.key==="Escape") cerrarModalVisualizar();
+    });
+  </script>
+</body>
+</html>
